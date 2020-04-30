@@ -9,6 +9,7 @@ import {
   getPullRequest,
   getAssetSizes,
   buildAssets,
+  createOrUpdateComment,
 } from './lib/helpers';
 
 let octokit;
@@ -34,12 +35,15 @@ async function run() {
     let body;
     try {
       body = buildOutputText(fileDiffs, withSame);
-      await octokit.issues.createComment({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        issue_number: pullRequest.number,
-        body,
-      });
+      await createOrUpdateComment(
+        {
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          issue_number: pullRequest.number,
+          body,
+        },
+        octokit
+      );
     } catch (e) {
       console.log('Could not create a comment automatically.');
 
